@@ -4,15 +4,16 @@ let fs = require('fs');
 let path = require('path');
 
 let rewardcentre = [
-        ['Monobuck!', 'Buys 1 buck. (PM an Admin or leader immediately after purchase.)', 150],
-        ['Pentabucks!', 'Buys 5 bucks. (PM an Admin or leader immediately after purchase.)', 600],
-        ['Decabucks!', 'Buys 10 buck. (PM an Admin or leader immediately after purchase.)', 1000],
+        ['Tiny Bucks Pack', 'Buys 5 bucks. (PM an Admin or leader immediately after purchase.)', 500],
+        ['Small Bucks Pack', 'Buys 10 bucks. (PM an Admin or leader immediately after purchase.)', 1000],
+        ['Normal Bucks Pack', 'Buys 15 bucks. (PM an Admin or leader immediately after purchase.)', 1500],
+        ['Big Bucks Pack', 'Buys 30 bucks. ( Pm an Admin or Leader immediately after purchase. )', 300],
+        ['Mega Bucks Pack', 'Buys 50 bucks. ( Pm an Admin or leader immediately after purchase )', 5000],
         ['1x PSGO', 'Buys 1 PSGO pack. (PM an Admin immediately after purchase.)', 1000],
-	['Avatar', 'Buys an custom avatar to be applied to your name (You supply. Images must be 80x80 otherwise they may not show correctly.)', 2000],
 	['3x PSGO', 'Buys 3 PSGO packs. (PM an Admin immediately after purchase.)', 2500],
-	['Casino Icon', 'Buy a custom icon that can be applied to the Casino room. You must take into account that the provided image should be 32 x 32', 5000],
-	['PSGO Booster Box', 'Buys 24 PSGO packs. (PM an Admin immediately after purchase.)', 15000],
-	['Bot Badge', 'Buys a badge to show you are botting.', 15000],
+    ['5x PSGO', 'Buys 5 PSGO packs. ( Pm an Admin immediately after purchase.)', 4000],
+	['PSGO Booster Box', 'Buys 20 PSGO packs. (PM an Admin immediately after purchase.)', 14000],
+	['Nickname', 'Buys a nickname that will be applied in your profile ( Special Item )', 15000],
 	
 
 ];
@@ -232,7 +233,7 @@ exports.commands = {
 
 	rewardcentre: 'rewardcentre',
 	rewardcentre: function (target, room, user) {
-		if (!this.canBroadcast()) return;
+                if (!this.canBroadcast()) return false;
 		return this.sendReply("|raw|" + rewardcentreDisplay);
 	},
 	rewardcentrehelp: ["/rewardcentre - Display items you can win with tickets."],
@@ -318,11 +319,11 @@ exports.commands = {
 		this.sendReply("|raw|" + display);
 	},
 
-	numbergame: 'startnumber',
-	numberstart: 'startnumber',
-	startnumber: function (target, room, user) {
+	ticketdice: 'startticketdice',
+	startticketdice: 'starttd',
+	starttd: function (target, room, user) {
 		if (!this.can('broadcast', null, room)) return false;
-		if (!target) return this.parse('/help startnumber');
+		if (!target) return this.parse('/tdhelp');
 		if (!this.canTalk()) return this.errorReply("You can not start number games while unable to speak.");
 
 		let amount = isTicket(target);
@@ -336,19 +337,23 @@ exports.commands = {
 		// Prevent ending a dice game too early.
 		room.number.startTime = Date.now();
 
-		room.addRaw("<div class='infobox'><h2><center><font color=#24678d>" + user.name + " has started a number game for </font><font color=red>" + amount + "</font><font color=#24678d>" + currencyName(amount) + ".</font><br><button name='send' value='/joinnumber'>Click to join.</button></center></h2></div>");
+		room.addRaw("<div class='infobox'><h2><center><font color=#24678d>" + user.name + " has started a ticket dice for </font><font color=red>" + amount + "</font><font color=#24678d>" + currencyName(amount) + ".</font><br><button name='send' value='/jointd'>Click to join.</button></center></h2></div>");
 	},
-	startnumberhelp: ["/startnumber [bet] - Start a dice game to gamble for tickets."],
+	tdhelp: function(target, room, user) {
+              if (!user.can('broadcast', null, room)) return false;
+                this.sendReplyBox("<center><b><u>Ticket Dice Commands</u></b><br /><b>/starttd [bet]</b> - Start a dice game to gamble for tickets.<br /> <b>/jointd</b> - join ticket dice.<br /><b>/endtd</b> - end ticket dice.<br />");
+        },
 
-	joinnumber: function (target, room, user) {
-		if (!room.number || (room.number.p1 && room.number.p2)) return this.errorReply("There is no number game in it's signup phase in this room.");
-		if (!this.canTalk()) return this.errorReply("You may not join number games while unable to speak.");
-		if (room.number.p1 === user.userid) return this.errorReply("You already entered this number game.");
+	joinnticketdice: 'jointd',
+        jointd: function (target, room, user) {
+		if (!room.number || (room.number.p1 && room.number.p2)) return this.errorReply("There is no ticket dice in it's signup phase in this room.");
+		if (!this.canTalk()) return this.errorReply("You may not join ticket dice while unable to speak.");
+		if (room.number.p1 === user.userid) return this.errorReply("You already joined this ticket dice.");
 		if (Db('ticket').get(user.userid, 0) < room.number.bet) return this.errorReply("You don't have enough tickets to join this game.");
 		Db('ticket').set(user.userid, Db('ticket').get(user.userid) - room.number.bet);
 		if (!room.number.p1) {
 			room.number.p1 = user.userid;
-			room.addRaw("<b>" + user.name + " has joined the number game.</b>");
+			room.addRaw("<b>" + user.name + " has joined the ticket dice.</b>");
 			return;
 		}
 		room.number.p2 = user.userid;
@@ -369,13 +374,14 @@ exports.commands = {
 		delete room.number;
 	},
 
-	endnumber: function (target, room, user) {
+	endtd: 'endticketdice',
+        endticketdice: function (target, room, user) {
 		if (!user.can('broadcast', null, room)) return false;
-		if (!room.number) return this.errorReply("There is no number game in this room.");
-		if ((Date.now() - room.number.startTime) < 15000 && !user.can('broadcast', null, room)) return this.errorReply("Regular users may not end a number game within the first minute of it starting.");
-		if (room.number.p2) return this.errorReply("Number game has already started.");
+		if (!room.number) return this.errorReply("There is no ticket dice in this room.");
+		if ((Date.now() - room.number.startTime) < 15000 && !user.can('broadcast', null, room)) return this.errorReply("Regular users may not end a ticket dice within the first minute of it starting.");
+		if (room.number.p2) return this.errorReply("Ticket dice has already started.");
 		if (room.number.p1) Db('ticket').set(room.number.p1, Db('ticket').get(room.number.p1, 0) + room.number.bet);
-		room.addRaw("<b>" + user.name + " ended the number game.</b>");
+		room.addRaw("<b>" + user.name + " ended the ticket dice.</b>");
 		delete room.number;
 	},
 

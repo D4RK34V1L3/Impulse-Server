@@ -32,7 +32,7 @@ var cmds = {
 	help: function (target, room, user) {
 		if (!this.canBroadcast()) return;
 		return this.sendReplyBox('<b>Custom Avatar commands</b><br>' +
-			'(All commands require ~)<br><br>' +
+			'(All commands require &/~)<br><br>' +
 			'<li>/ca set <small>or</small> /setavatar <em>User</em>, <em>URL</em> - Sets a user\'s custom avatar to the specified image URL.' +
 			'<li>/ca delete <small>or</small> /deleteavatar <em>User</em> - Deletes a user\'s custom avatar.' +
 			'<li>/ca move <small>or</small> /moveavatar <em>User 1</em>, <em>User 2</em> - Moves User 1\'s custom avatar to User 2.'

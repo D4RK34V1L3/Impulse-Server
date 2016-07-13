@@ -1,18 +1,26 @@
 'use strict';
 
+let color = require('../config/color');
 let fs = require('fs');
 let path = require('path');
 
 let shop = [
 	['Symbol', 'Buys a custom symbol to go infront of name and puts you at top of userlist. (Temporary until restart, symbols that could cause offense or impersonate staff will result in it being denied.)', 5],
+        ['POTD', 'Buys ability to set pokemon of the day. ( Pm an admin to set your favorite pokemon of the day )', 10],
 	['Fix', 'Buys the ability to alter your current custom avatar or trainer card. (don\'t buy if you have neither)', 10],
-	['Region Room', 'Purchases a room at a reduced rate for use with a region.  A roster must be supplied with at least 5 members for this room.', 15],
+        ['Poof', 'Buys a poof to be added to the poof poll.', 15],
+	['Region/League Room', 'Purchases a room at a reduced rate for use with a region.  A roster must be supplied with at least 5 members for this room.', 15],
+        ['declare', 'You get the ability to have a message declared in the lobby. This can be used for league advertisement (not server)', 20],
+        ['Info Box', 'Buys an infobox that will be viewable with a command such as /mia.', 20],
 	['Userlist Icon Upgrade', 'Purchases an userlist icon for another room of your choice. (may take some time to process)', 25],
-	['Draft League Room', 'Purchases a room at a reduced rate for use for a draft league.  A roster must be supplied with at least 5 members for this room.', 25],
+        ['Symbol Color', 'Get ur auth symbol colored (give rooms u have auth only)', 30],
 	['Custom Avatar', 'Buys an custom avatar to be applied to your name (You supply. Images larger than 80x80 may not show correctly)', 35],
-	['Room', 'Buys a chatroom for you to own. (within reason, can be refused)', 40],
+        ['Room Shop', '	Buys a fully customizable shop for your room. The bucks earned from purchases go to the room founder or room bank.', 50],
+	['Room', 'Buys a chatroom for you to own. (within reason, can be refused)', 60],
 	['Emotes', 'Buys an emote to add to the emote poll, (You supply. Images must be 50x50 and can be refused if deemed wildly inappropiate.', 65],
+        ['Custom Color', 'Buys a color that will e applied to you userlist and chat username ( Pm an admin to get your custom color )', 100],
 	['Userlist Icon', 'Buys a pokemon icon to accompany your name in the userlist for the lobby. (send the name of the pokemon you wish for it be to a member of staff, may take some time to process)', 125],
+        ['Message Colors', 'Buys ability to post colored messages in the chatrooms. ( Pm prince sky to get your message colors )', 175],
 ];
 
 let shopDisplay = getShopDisplay(shop);
@@ -142,8 +150,9 @@ exports.commands = {
 		if (!target) target = user.name;
 
 		const amount = Db('money').get(toId(target), 0);
-		this.sendReplyBox(Tools.escapeHTML(target) + " has " + amount + currencyName(amount) + ".");
-	},
+		let group = user.getIdentity().charAt(0);
+		this.sendReply("|raw|<font color=#948A88>" + group +  "</font><font color=" + color(user.userid) + "><b>" + Tools.escapeHTML(target) + "</b></font> has " + amount + currencyName(amount) + ".");
+  	},
 	wallethelp: ["/wallet [user] - Shows the amount of money a user has."],
 
 	givebuck: 'givemoney',
@@ -317,6 +326,7 @@ exports.commands = {
 	},
 
 	dicegame: 'startdice',
+	buckdice: 'startdice',
 	dicestart: 'startdice',
 	startdice: function (target, room, user) {
 		if (!this.can('broadcast', null, room)) return false;
@@ -385,9 +395,17 @@ exports.commands = {
 			return acc + Db('money').get(cur);
 		}, 0);
 		let average = Math.floor(total / users.length);
- 		let output = "There is " + total + currencyName(total) + " circulating in the economy. ";
+		let output = "There is " + total + currencyName(total) + " circulating in the economy. ";
 		output += "The average user has " + average + currencyName(average) + ".";
 		this.sendReplyBox(output);
 	},
-
+	buckdicehelp:  function (target, room, user) {
+		if (!user.can('broadcast', null, room)) return false;
+		     this.sendReplyBox('<b>Dice commands</b><br>' +
+			'<li>/buckdice <small>or</small> /dicegame <em>[amount]</em> - Starts a game of dice in the room for a given number of bucks, 1 by default.' +
+			'<li>/joindice  - Joins the game of dice. You cannot use this command if you don\'t have the number of bucks the game is for.' +
+			'<li>/leavedice  - Leaves the game of dice.'+
+			'<1i>/enddice  - Ends the game of dice. Requires + or higher to use.'
+		);
+	},
 };

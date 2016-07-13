@@ -22,13 +22,13 @@ function logMoney(message) {
 }
 
 exports.commands = {
-	seticon: function (target, room, user) {
-		if (!this.can('declare')) return this.errorReply("Access denied.");
+	setsparkle: function (target, room, user) {
+		if (!this.can('eval')) return this.errorReply("Access denied.");
 
 		let args = target.split(',');
-		if (args.length < 3) return this.parse('/help seticon');
+		if (args.length < 3) return this.parse('/help setsparkle');
 		let username = toId(args.shift());
-		let image = 'background: rgb(09, 37, 67) url("' + args.shift().trim() + '") right no-repeat;';
+		let image = 'background: url("' + args.shift().trim() + '") left no-repeat;';
 		selectors = '\n\n' + '  #' + toId(args.shift()) + '-userlist-user-' + username;
 		args.forEach(function (room) {
 			selectors += ', #' + toId(room) + '-userlist-user-' + username;
@@ -36,9 +36,9 @@ exports.commands = {
 		selectors += ' { \n' + '    ' + image +  '\n  }';
 
 		logMoney(user.name + " has set an icon to " + username + ".");
-		this.privateModCommand("(" + user.name + " has set an icon to  " + username + ")");
-		Rooms('staff').add('|raw|' + user.name + " has set an icon to " + username +  ".").update();
+		this.privateModCommand("(" + user.name + " has set an sparkle to  " + username + ")");
+		Rooms('staff').add('|raw|' + user.name + " has set an sparkle to " + username +  ".").update();
 		writeIconCSS();
 	},
-	seticonhelp: ["/seticon [username], [image], [room 1], [room 2], etc. - Sets an icon to a user in chosen rooms."],
+	setsparklehelp: ["/setsparkle [username], [image], [room 1], [room 2], etc. - Sets an sparkle to a user in chosen rooms."],
 };

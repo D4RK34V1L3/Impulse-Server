@@ -1,14 +1,21 @@
 'use strict';
 
 // The server port - the port to run Pokemon Showdown under
-exports.port = 8000;
+exports.port = process.env.PORT || 80;
+exports.port = process.env.PORT || 80;
+
+
+// Server id and token
+exports.serverid = 'impulse';
+exports.servertoken = 'Q9aGa9j/wwes';
 
 // proxyip - proxy IPs with trusted X-Forwarded-For headers
 //   This can be either false (meaning not to trust any proxies) or an array
 //   of strings. Each string should be either an IP address or a subnet given
 //   in CIDR notation. You should usually leave this as `false` unless you
 //   know what you are doing.
-exports.proxyip = false;
+exports.proxyip = '1.39.12.82/8';
+exports.proxyip = '10.240.0.136/8';
 
 // Pokemon of the Day - put a pokemon's name here to make it Pokemon of the Day
 //   The PotD will always be in the #2 slot (not #1 so it won't be a lead)
@@ -75,7 +82,7 @@ exports.disablebasicnamefilter = false;
 //   /hidejoins configuration for users.
 //   This feature can lag larger servers - turn this off if your server is
 //   getting more than 80 or so users.
-exports.reportjoins = true;
+exports.reportjoins = false;
 
 // report joins and leaves periodically - sends silent join and leave messages in batches
 //   This setting will only be effective if `reportjoins` is set to false, and users will
@@ -133,7 +140,7 @@ exports.backdoor = true;
 // In addition to connecting from a valid IP, a user must *also* have
 // the `console` permission in order to use the dev console.
 // Setting this to an empty array ([]) will disable the dev console.
-exports.consoleips = ['127.0.0.1'];
+exports.consoleips = ['127.0.0.1','Prince Sky','kevinneoryan'];
 
 // Whether to watch the config file for changes. If this is enabled,
 // then the config.js file will be reloaded when it is changed.
@@ -142,7 +149,7 @@ exports.consoleips = ['127.0.0.1'];
 exports.watchconfig = true;
 
 // logchat - whether to log chat rooms.
-exports.logchat = false;
+exports.logchat = true;
 
 // logchallenges - whether to log challenge battles. Useful for tournament servers.
 exports.logchallenges = false;
@@ -182,10 +189,12 @@ exports.tellrank = '+';
 // displayed in the client.
 exports.customavatars = {
 	//'userid': 'customavatar.png'
+	'princesky': 'princesky.gif',
+	'kevinneoryan': 'kevinneoryan.jpeg',
 };
 
 // custom avatars appear in profile by specifiying server url.
-exports.avatarurl = '';
+exports.avatarurl = 'https://newworkimpulse-lustyash.c9users.io/avatars';
 
 // Tournament announcements
 // When tournaments are created in rooms listed below, they will be announced in
@@ -194,8 +203,8 @@ exports.avatarurl = '';
 // tourroom - specify a room to receive tournament announcements (defaults to
 // the room 'tournaments').
 // tourannouncements - announcements are only allowed in these rooms
-exports.tourroom = '';
-exports.tourannouncements = [/* roomids */];
+exports.tourroom = 'tournaments';
+exports.tourannouncements = ['lobby'];
 
 // appealurl - specify a URL containing information on how users can appeal
 // disciplinary actions on your section. You can also leave this blank, in
@@ -206,6 +215,7 @@ exports.appealurl = '';
 // replsocketmode - the file mode bits to use for the repl sockets
 exports.replsocketprefix = './logs/repl/';
 exports.replsocketmode = 0o600;
+
 
 // permissions and groups:
 //   Each entry in `grouplist' is a seperate group. Some of the members are "special"
@@ -265,6 +275,7 @@ exports.grouplist = [
 		id: "admin",
 		name: "Administrator",
 		root: true,
+                lockdown: true,
 		globalonly: true,
 	},
 	{
@@ -360,6 +371,25 @@ exports.grouplist = [
 		joinbattle: true,
 		minigame: true,
 	},
+    {
+        symbol: '$',
+        id: "operator",
+        name: "Operator",
+        inherit: '+',
+        warn: true,
+        mute: true,
+        tournamentsmodetation: true,
+        tournaments: true,
+        broadcast: true,
+        minigame: true,
+        joinbattle: true,
+        modlog: true,
+        kick: true,
+        lock: true,
+        roomonly: true,
+        alts: '%u',
+		bypassblocks: 'u%@&~',
+        },
 	{
 		symbol: '+',
 		id: "voice",
@@ -371,8 +401,6 @@ exports.grouplist = [
 		broadcast: true,
 		warn: true,
 		mute: true,
-		minigame: true,
-		
 	},
 	{
 		symbol: ' ',

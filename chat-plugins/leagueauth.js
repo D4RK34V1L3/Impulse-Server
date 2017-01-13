@@ -4,7 +4,7 @@ var Groups = {
 
         '\u00a9': {
                 id: "champion",
-                name: "Champion",
+                name: "Campeón",
                 rank: 9
         },
         '\u03a3': {
@@ -14,37 +14,37 @@ var Groups = {
         },
         '\u0398': {
                 id: "rg",
-                name: "Royal Guard",
+                name: "Guardián Real",
                 rank: 7
         },
         '\u03a9': {
                 id: "professor",
-                name: "Professor",
+                name: "Profetsor",
                 rank: 6
         },
         '\u039e': {
         	id: "ace",
-        	name: "Ace",
+        	name: "As",
         	rank: 5
         },
         '\u03b2': {
                 id: "brain",
-                name: "Frontier Brain",
+			name: "Cerebro de la frontera",
                 rank: 4
         },        
         '\u03dd': {
                 id: "frontier",
-                name: "Frontier",
+                name: "Frontera",
                 rank: 3
         },
         '\u00a3': {
                 id: "gleader",
-                name: "Gym Leader",
+                name: "Líder de gimnasio",
                 rank: 2
         },
         '\u03c4': {
                 id: "trainer",
-                name: "Gym Trainer",
+                name: "Entrenador",
                 rank: 1
         },
         ' ': {
